@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot - RSJD Dr. Amino Gondohutomo</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #d0f2f3, #c6e4c5);
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 0;
+      }
+
+      #navbar {
+        width: 100%;
+        background-color: #00796b;
+        color: white;
+        padding: 15px 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+
+      #navbar .navbar-brand {
+        color: white;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+      }
+
+      #navbar .navbar-brand img {
+        height: 50px;
+        margin-right: 15px;
+      }
+
+      #navbar .nav-link {
+        color: white;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      #navbar .nav-link:hover {
+        color: #dce775;
+      }
+
+      #navbar .navbar-toggler {
+        border: none;
+      }
+
+      #navbar .navbar-toggler-icon {
+        background-image: url('data:image/svg+xml;charset=utf8,%3Csvg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M4 6H20V8H4V6ZM4 11H20V13H4V11ZM4 16H20V18H4V16Z" fill="%23FFFFFF"/%3E%3C/svg%3E');
+      }
+
+      #chat-container {
+        background-color: #ffffff;
+        border-radius: 15px;
+        /* padding: 20px; */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        /* margin: 20; */
+        padding-top: 3%;
+      }
+
+      .content-section {
+        padding: 20px;
+        max-height: 400px; /* Adjust this height as needed */
+        overflow-y: auto; /* Enable vertical scrolling */
+        background-color: #ffffff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        margin-top: 20px;
+      }
+
+      h1,
+      h2 {
+        text-align: center;
+        color: #004d40;
+        margin-bottom: 2px;
+        font-weight: 600;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+      h2 {
+        font-size: 18px;
+        margin-bottom: 4px;
+        color: #00796b;
+      }
+
+      #chat-history {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        background-color: #e0f2f1;
+      }
+
+      .bot-message {
+        max-width: 85%;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 15px;
+        word-wrap: break-word;
+        position: relative;
+        transition: background-color 0.3s, transform 0.3s;
+      }
+
+      .user-message {
+        background-color: #004d40;
+        color: white;
+        align-self: flex-end;
+        text-align: right;
+        align-items: end;
+        justify-content: end;
+        width: fit-content;
+        max-width: 85%;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 15px;
+        word-wrap: break-word;
+        position: relative;
+        transition: background-color 0.3s, transform 0.3s;
+        right: 0;
+        margin-right: 0;
+        margin-left: auto;
+      }
+
+      .bot-message {
+        background-color: #b2dfdb;
+        color: #004d40;
+        align-self: flex-start;
+        text-align: left;
+      }
+
+      .loader {
+        display: none;
+        margin: 0 auto;
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: #004d40;
+        animation: spin 1s ease infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      #chat-input {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      #user-input {
+        flex-grow: 1;
+        padding: 10px;
+        margin-left: 2%;
+        border-radius: 25px;
+        border: 1px solid #ddd;
+      }
+
+      #send-btn {
+        background-color: #004d40;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #send-btn:hover {
+        background-color: #00251a;
+      }
+
+      #footer-text {
+        text-align: center;
+        margin-top: 10px;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .content-section {
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand">
+      <img src="http://localhost/test_rsjd/logo.png" alt="logo">
+      RSJD Dr. Amino Gondohutomo
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-toggle="collapse" data-target="#about-content">Tentang Kami</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-toggle="collapse" data-target="#services-content">Layanan dan Fasilitas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-toggle="collapse" data-target="#contact-content">Kontak</a>
+        </li>
+      </ul>
+    </div>
+  </nav> -->
+
+    <div id="chat-container">
+      <h1>Layanan Chat Otomatis</h1>
+      <h2>Amino Hospital</h2>
+      <div id="chat-history"></div>
+      <div id="chat-input">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your message..."
+          autofocus />
+        <button id="send-btn">Kirim</button>
+        <div id="loader" class="loader"></div>
+      </div>
+      <div id="footer-text">Made by Berlianrwnd</div>
+    </div>
+
+    <div id="about-content" class="content-section collapse">
+      <h2>Tentang Kami</h2>
+      <p>
+        RSJD Dr. Amino Gondohutomo merupakan satu-satunya Rumah Sakit Jiwa di
+        Semarang yang beralamat di Jl. Brigjen Sudiarto No.347, Gemah, Kec.
+        Pedurungan, Kota Semarang, Jawa Tengah 50611.
+      </p>
+      <p>RSJD Dr. Amino Gondohutomo memiliki visi dan misi, yakni:</p>
+      <p>
+        <strong>Visi:</strong> Menuju pelayanan Kesehatan jiwa paripurna yang
+        bermutu.
+      </p>
+      <p><strong>Misi:</strong></p>
+      <ul>
+        <li>
+          Melaksanakan dan mengembangkan pelayanan Kesehatan jiwa paripurna.
+        </li>
+        <li>Meningkatkan profesionalisme sumber daya manusia.</li>
+        <li>Meningkatkan sarana, prasarana, dan teknologi dalam pelayanan.</li>
+        <li>Meningkatkan peran serta masyarakat di bidang Kesehatan jiwa.</li>
+      </ul>
+      <p>
+        Untuk informasi lebih lanjut, kunjungi
+        <a
+          href="https://rs-amino.jatengprov.go.id/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >website resmi RSJD Dr. Amino Gondohutomo</a
+        >.
+      </p>
+    </div>
+    <div id="services-content" class="content-section collapse">
+      <h2>Layanan dan Fasilitas</h2>
+      <p>
+        Berikut adalah fasilitas yang dimiliki oleh RSJD Dr. Amino Gondohutomo:
+      </p>
+      <ul>
+        <li>Bidang Keperawatan</li>
+        <li>Penunjang Medis</li>
+        <li>Rendiklitbang</li>
+        <li>Rawat Inap</li>
+        <li>Rawat Jalan</li>
+        <li>Instalasi Gawat Darurat (IGD)</li>
+        <li>Rehab Mental</li>
+        <li>Rehab Medik</li>
+        <li>Rekam Medis (Medical Records)</li>
+        <li>Fasilitas Umum</li>
+        <li>Instalasi Sarana - Prasarana</li>
+      </ul>
+      <p>
+        Untuk informasi lebih lanjut, kunjungi
+        <a href="https://rs-amino.jatengprov.go.id/" target="_blank"
+          >website resmi RSJD Dr. Amino Gondohutomo</a
+        >.
+      </p>
+    </div>
+    <div id="contact-content" class="content-section collapse">
+      <h2>Kontak</h2>
+      <p>Anda bisa langsung mendatangi RSJD Dr. Amino Gondohutomo di:</p>
+      <address>
+        Jl. Brigjen Sudiarto No.347, <br />
+        Palebon, Pedurungan, <br />
+        Kota Semarang, Jawa Tengah, 50246, <br />
+        Indonesia
+      </address>
+      <p>Atau menghubungi kami melalui:</p>
+      <ul>
+        <li>
+          <strong>Telepon:</strong>
+          <ul>
+            <li>(024) 6722565</li>
+            <li>(024) 6731543</li>
+            <li>(024) 6731573</li>
+          </ul>
+        </li>
+        <li><strong>Fax:</strong> (024) 6722566</li>
+        <li><strong>Nomor Aduan:</strong> 0895-1563-6878</li>
+        <li>
+          <strong>Email:</strong>
+          <a href="mailto:amino@jatengprov.id">amino@jatengprov.id</a>
+        </li>
+      </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      document
+        .getElementById("send-btn")
+        .addEventListener("click", sendMessage);
+      document
+        .getElementById("user-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") sendMessage();
+        });
+
+      // Tambahkan pesan otomatis saat halaman dimuat
+      window.onload = function () {
+        initiateBotGreeting();
+      };
+
+      function initiateBotGreeting() {
+        const initialBotMessage =
+          "Ini adalah layanan chat AI Otomatis Amino Hospital. AI yang digunakan dalam sistem ini memberikan respons berdasarkan informasi yang telah ditentukan sebelumnya. Jika pertanyaan Anda terlalu kompleks, AI akan mencoba memberi jawaban berdasarkan informasi yang diambil dari sumber di internet. Meskipun AI berusaha memberikan jawaban yang akurat, informasi dari internet mungkin tidak sepenuhnya valid. Harap konsultasikan dengan ahli terkait.";
+        addMessageToChat("bot-message", initialBotMessage);
+      }
+
+      function sendMessage() {
+        const userInput = document.getElementById("user-input").value;
+        if (userInput.trim() === "") return;
+
+        addMessageToChat("user-message", userInput);
+        document.getElementById("user-input").value = "";
+        document.getElementById("loader").style.display = "block";
+
+        fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userInput }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            addMessageToChat("bot-message", data.response);
+            document.getElementById("loader").style.display = "none";
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            document.getElementById("loader").style.display = "none";
+          });
+      }
+
+      function addMessageToChat(type, message) {
+        const chatHistory = document.getElementById("chat-history");
+        const newMessage = document.createElement("div");
+        newMessage.classList.add(type);
+        newMessage.innerHTML = message;
+        chatHistory.appendChild(newMessage);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
